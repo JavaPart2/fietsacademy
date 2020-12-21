@@ -18,4 +18,14 @@ public class JPADocentRepository implements DocentRepository{
     public Optional<Docent> findById(long id) {
         return Optional.ofNullable(manager.find(Docent.class, id));
     }
+
+    @Override
+    public void create(Docent docent) {
+        manager.persist(docent);
+    }
+
+    @Override
+    public void delete(long id) {
+        findById(id).ifPresent(docent -> manager.remove(docent));
+    }
 }
