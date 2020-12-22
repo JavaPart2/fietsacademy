@@ -81,4 +81,26 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
         manager.flush();
         assertThat(super.countRowsInTableWhere(DOCENTEN, "id = " + id)).isZero();
     }
+
+    @Test
+    void findAll(){
+        assertThat(jpaDocentRepository.findAll())
+                .hasSize(super.countRowsInTable(DOCENTEN))
+                .extracting(docent -> docent.getWedde())
+                .isSorted();
+    }
+
+    @Test
+    void findByWeddeBetween(){
+        var duizend = BigDecimal.valueOf(1000);
+        var tweeduizend = BigDecimal.valueOf(2000);
+        var docenten = jpaDocentRepository.findByWeddeBetween(duizend, tweeduizend);
+        assertThat(docenten)
+                .hasSize(super.countRowsInTableWhere(DOCENTEN, "wedde between 1000 and 2000"))
+                .allSatisfy(docent -> assertThat(docent.getWedde()).isBetween(duizend, tweeduizend));
+    }
+
+    void findAllEmails(){
+        assertThat(jpaDocentRepository.findAllEmail()).hasSize(super.countRowsInTable(DOCENTEN));
+    }
 }
