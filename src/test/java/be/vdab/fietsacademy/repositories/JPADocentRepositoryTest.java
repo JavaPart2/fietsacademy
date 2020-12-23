@@ -100,7 +100,17 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
                 .allSatisfy(docent -> assertThat(docent.getWedde()).isBetween(duizend, tweeduizend));
     }
 
+    @Test
     void findAllEmails(){
         assertThat(jpaDocentRepository.findAllEmail()).hasSize(super.countRowsInTable(DOCENTEN));
+    }
+
+    @Test
+    void algemeneOpslag(){
+        assertThat(jpaDocentRepository.algemeneOpslag(BigDecimal.TEN))
+                .isEqualTo(super.countRowsInTable(DOCENTEN));
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select wedde from docenten where id = ?", BigDecimal.class, idVanTestMan()))
+                .isEqualByComparingTo("1100");
     }
 }

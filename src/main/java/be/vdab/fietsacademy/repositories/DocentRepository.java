@@ -15,4 +15,5 @@ public interface DocentRepository {
     List<Docent> findAll();
     List<Docent> findByWeddeBetween(BigDecimal van, BigDecimal tot);
     List<IdNaamEmail> findAllEmail();
+    int algemeneOpslag(BigDecimal percentage);
 }

@@ -53,4 +53,12 @@ public class JPADocentRepository implements DocentRepository{
                 "select new be.vdab.fietsacademy.queryresults.IdNaamEmail(d.id, d.familienaam, d.emailAdres)" +
                 " from Docent d", IdNaamEmail.class).getResultList();
     }
+
+    @Override
+    public int algemeneOpslag(BigDecimal percentage) {
+        var factor = BigDecimal.ONE.add(percentage.divide(BigDecimal.valueOf(100)));
+        return manager.createNamedQuery("Docent.algemeneOpslag")
+                .setParameter("factor", factor)
+                .executeUpdate();
+    }
 }
