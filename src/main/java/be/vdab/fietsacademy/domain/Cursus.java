@@ -1,24 +1,27 @@
 package be.vdab.fietsacademy.domain;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "cursussen")
 public abstract class Cursus {
+    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(columnDefinition = "binary(16)")
+    private UUID id;
     private String naam;
 
     public Cursus(String naam) {
         this.naam = naam;
+        this.id = UUID.randomUUID();
     }
 
     protected Cursus() {
     }
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 

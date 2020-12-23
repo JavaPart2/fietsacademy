@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,17 +24,20 @@ public class JpaCursusRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     private static final LocalDate EEN_DATUM = LocalDate.of(2019, 1, 1);
     private final JpaCursusRepository repository;
 
-    public JpaCursusRepositoryTest(JpaCursusRepository repository) {
+    private final EntityManager manager;
+
+    public JpaCursusRepositoryTest(JpaCursusRepository repository, EntityManager manager) {
         this.repository = repository;
+        this.manager = manager;
     }
 
-    private long idVanTestGroepsCursus() {
+    private UUID idVanTestGroepsCursus() {
         return super.jdbcTemplate.queryForObject(
-                "select id from cursussen where naam='testGroep'", Long.class);
+                "select bin_to_uuid(id) from groepscursussen where naam='testGroep'", UUID.class);
     }
-    private long idVanTestIndividueleCursus() {
+    private UUID idVanTestIndividueleCursus() {
         return super.jdbcTemplate.queryForObject(
-                "select id from cursussen where naam='testIndividueel'", Long.class);
+                "select bin_to_uuid(id) from individuelecursussen where naam='testIndividueel'", UUID.class);
     }
 
     @Test
@@ -51,26 +56,28 @@ public class JpaCursusRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 
     @Test
     void findByOnbestaandeId(){
-        assertThat(repository.findById(-1)).isNotPresent();
+        assertThat(repository.findById(UUID.randomUUID())).isNotPresent();
     }
 
     @Test
     void createGroepsCursus(){
         var cursus = new Groepscursus("testGroep2", EEN_DATUM, EEN_DATUM);
         repository.create(cursus);
-        assertThat(super.countRowsInTableWhere(CURSUSSEN,
-                "id = '" + cursus.getId() +"'")).isOne();
+        manager.flush();
+//        assertThat(super.countRowsInTableWhere(CURSUSSEN,
+//                "id = '" + cursus.getId() +"'")).isOne();
         assertThat(super.countRowsInTableWhere(GROEPS_CURSUSSEN,
-                "id = '" + cursus.getId() +"'")).isOne();
+                "id = uuid_to_bin('" + cursus.getId() +"')")).isOne();
     }
 
     @Test
     void createIndividueleCursus(){
         var cursus = new IndividueleCursus("testIndividueel2", 7);
         repository.create(cursus);
-        assertThat(super.countRowsInTableWhere(CURSUSSEN,
-                "id = '" + cursus.getId() +"'")).isOne();
+        manager.flush();
+//        assertThat(super.countRowsInTableWhere(CURSUSSEN,
+//                "id = '" + cursus.getId() +"'")).isOne();
         assertThat(super.countRowsInTableWhere(INDIVIDUELE_CURSUSSEN,
-                "id = '" + cursus.getId() +"'")).isOne();
+                "id = uuid_to_bin('" + cursus.getId() +"')")).isOne();
     }
 }
