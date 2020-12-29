@@ -1,9 +1,6 @@
 package be.vdab.fietsacademy.repositories;
 
-import be.vdab.fietsacademy.domain.Adres;
-import be.vdab.fietsacademy.domain.Campus;
-import be.vdab.fietsacademy.domain.Groepscursus;
-import be.vdab.fietsacademy.domain.IndividueleCursus;
+import be.vdab.fietsacademy.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
@@ -53,5 +50,19 @@ public class JpaCampusRepositoryTest extends AbstractTransactionalJUnit4SpringCo
         repository.create(campus);
         assertThat(super.countRowsInTableWhere(CAMPUSSEN,
                 "id = " + campus.getId() )).isOne();
+    }
+
+    @Test
+    void telefoonNrsLezen(){
+        assertThat(repository.findById(idVanTestCampus()).get().gettelefoonNrs())
+                .containsOnly(new TelefoonNr("052334625", false, "test"));
+        repository.findById(idVanTestCampus()).get().gettelefoonNrs().stream()
+                .forEach(telefoonNr -> {
+                    System.out.print("telefoonnr is : ");
+                    System.out.println(telefoonNr.getNummer());
+                    System.out.print(telefoonNr.getOpmerking());
+                    System.out.println("einde");
+
+                });
     }
 }

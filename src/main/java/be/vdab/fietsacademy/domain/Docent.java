@@ -3,6 +3,9 @@ package be.vdab.fietsacademy.domain;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "docenten")
@@ -16,6 +19,10 @@ public class Docent {
     private Geslacht geslacht;
     private BigDecimal wedde;
     private String emailAdres;
+    @ElementCollection
+    @CollectionTable(name = "docentenbijnamen", joinColumns = @JoinColumn(name = "docentid"))
+    @Column(name = "bijnaam")
+    private Set<String> bijnamen;
 
     public Docent(String voornaam, String familienaam, Geslacht geslacht, BigDecimal wedde, String emailAdres) {
         this.voornaam = voornaam;
@@ -23,6 +30,22 @@ public class Docent {
         this.geslacht = geslacht;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
+        this.bijnamen = new LinkedHashSet<>();
+    }
+
+    public Set<String> getBijnamen(){
+        return Collections.unmodifiableSet(bijnamen);
+    }
+
+    public boolean addBijnaam(String bijnaam){
+        if (bijnaam.trim().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return bijnamen.add(bijnaam);
+    }
+
+    public boolean removeBijnaam(String bijnaam){
+        return bijnamen.remove(bijnaam);
     }
 
     protected Docent() {
