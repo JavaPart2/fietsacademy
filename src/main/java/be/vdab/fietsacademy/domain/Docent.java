@@ -23,18 +23,19 @@ public class Docent {
     @CollectionTable(name = "docentenbijnamen", joinColumns = @JoinColumn(name = "docentid"))
     @Column(name = "bijnaam")
     private Set<String> bijnamen;
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "campusid")
-//    private Campus campus;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "campusid")
+    private Campus campus;
 
-    public Docent(String voornaam, String familienaam, Geslacht geslacht, BigDecimal wedde, String emailAdres) {
+    public Docent(String voornaam, String familienaam, Geslacht geslacht,
+                  BigDecimal wedde, String emailAdres, Campus campus) {
         this.voornaam = voornaam;
         this.familienaam = familienaam;
         this.geslacht = geslacht;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.bijnamen = new LinkedHashSet<>();
-//        setCampus(campus);
+        setCampus(campus);
     }
 
     protected Docent() {
@@ -54,14 +55,17 @@ public class Docent {
         return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
     }
 
-//    public Campus getCampus() {
-//        return campus;
-//    }
-//
-//    public void setCampus(Campus campus) {
-//        this.campus = campus;
-//    }
-//
+    public Campus getCampus() {
+        return campus;
+    }
+
+    public void setCampus(Campus campus) {
+        if (!campus.getDocenten().contains(this)){
+            campus.addDocent(this);
+        }
+        this.campus = campus;
+    }
+
     public Set<String> getBijnamen(){
         return Collections.unmodifiableSet(bijnamen);
     }

@@ -18,8 +18,7 @@ public class Campus {
     @CollectionTable(name = "campussentelefoonnrs", joinColumns = @JoinColumn(name = "campusId"))
     @OrderBy("fax")
     private Set<TelefoonNr> telefoonNrs;
-    @OneToMany
-    @JoinColumn(name = "campusid")
+    @OneToMany(mappedBy = "campus")
     @OrderBy("voornaam, familienaam")
     private Set<Docent> docenten;
 
@@ -38,10 +37,19 @@ public class Campus {
     }
 
     public boolean addDocent(Docent docent){
+        var toegevoegd = docenten.add(docent);
+        var oudeCampus = docent.getCampus();
+
+        if (oudeCampus != null && oudeCampus != this){
+            oudeCampus.docenten.remove(docent);
+        }
+        if (this != oudeCampus){
+            docent.setCampus(this);
+        }
         if (docent == null){
             throw new NullPointerException();
         }
-        return docenten.add(docent);
+        return toegevoegd;
     }
 
     public Set<TelefoonNr> gettelefoonNrs(){

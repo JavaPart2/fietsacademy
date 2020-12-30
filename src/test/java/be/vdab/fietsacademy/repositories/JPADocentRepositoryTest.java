@@ -45,8 +45,8 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     void beforeEach(){
         campus = new Campus("test", new Adres("test", "test", "test", "test"));
         docent = new Docent("test", "test", Geslacht.MAN,
-                BigDecimal.valueOf(100), "test@test.be");
-        campus.addDocent(docent);
+                BigDecimal.valueOf(100), "test@test.be", campus);
+//        campus.addDocent(docent);
     }
 
     @Test
@@ -145,11 +145,9 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
                 .isEqualTo("test");
     }
 
-/*
     @Test
     void campusLazyLoaded(){
         var docent = jpaDocentRepository.findById(idVanTestMan()).get();
         assertThat(docent.getCampus().getNaam()).isEqualTo("test");
     }
-*/
 }
