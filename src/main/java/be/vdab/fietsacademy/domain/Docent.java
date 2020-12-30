@@ -23,32 +23,45 @@ public class Docent {
     @CollectionTable(name = "docentenbijnamen", joinColumns = @JoinColumn(name = "docentid"))
     @Column(name = "bijnaam")
     private Set<String> bijnamen;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "campusid")
-    private Campus campus;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "campusid")
+//    private Campus campus;
 
-    public Docent(String voornaam, String familienaam, Geslacht geslacht, BigDecimal wedde, String emailAdres,
-                  Campus campus) {
+    public Docent(String voornaam, String familienaam, Geslacht geslacht, BigDecimal wedde, String emailAdres) {
         this.voornaam = voornaam;
         this.familienaam = familienaam;
         this.geslacht = geslacht;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.bijnamen = new LinkedHashSet<>();
-        setCampus(campus);
+//        setCampus(campus);
     }
 
     protected Docent() {
     }
 
-    public Campus getCampus() {
-        return campus;
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Docent) {
+            var andereDocent = (Docent) object;
+            return this.emailAdres.equalsIgnoreCase(andereDocent.emailAdres);
+        }
+        return false;
     }
 
-    public void setCampus(Campus campus) {
-        this.campus = campus;
+    @Override
+    public int hashCode() {
+        return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
     }
 
+//    public Campus getCampus() {
+//        return campus;
+//    }
+//
+//    public void setCampus(Campus campus) {
+//        this.campus = campus;
+//    }
+//
     public Set<String> getBijnamen(){
         return Collections.unmodifiableSet(bijnamen);
     }

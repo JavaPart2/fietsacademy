@@ -10,13 +10,22 @@ import static org.assertj.core.api.Assertions.*;
 public class DocentTest {
     private final static BigDecimal WEDDE = BigDecimal.valueOf(200);
     private Docent docent1;
+    private Docent docent2;
     private Campus campus1;
 
     @BeforeEach
     void beforeEach(){
         campus1 = new Campus("test", new Adres("test", "test", "test", "test"));
         docent1 = new Docent("test", "test",
-                Geslacht.MAN, WEDDE, "test@test.be", campus1);
+                Geslacht.MAN, WEDDE, "test@test.be");
+        docent2 = new Docent("test2", "test2",
+                Geslacht.MAN, WEDDE, "test2@test.be");
+    }
+
+    @Test
+    void meerdereDocentenKunnenTotDezelfdeCampusBehoren() {
+        assertThat(campus1.addDocent(docent1)).isTrue();
+        assertThat(campus1.addDocent(docent2)).isTrue();
     }
 
     @Test

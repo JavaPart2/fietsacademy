@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(JpaCampusRepository.class)
-@Sql("/insertCampus.sql")
+@Sql({"/insertCampus.sql", "/insertDocent.sql"})
 public class JpaCampusRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
     private static final String CAMPUSSEN = "campussen";
     private final JpaCampusRepository repository;
@@ -29,6 +29,13 @@ public class JpaCampusRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     private Long idVanTestCampus() {
         return super.jdbcTemplate.queryForObject(
                 "select id from campussen where naam='test'", Long.class);
+    }
+
+    @Test
+    void docentenLazyLoaded(){
+        assertThat(repository.findById(idVanTestCampus()).get().getDocenten())
+                .hasSize(2)
+                .first().extracting(docent -> docent.getVoornaam()).isEqualTo("testM");
     }
 
     @Test

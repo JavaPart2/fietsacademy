@@ -30,10 +30,10 @@ public class DefaultDocentServiceTest {
 
     @BeforeEach
     void beforeEach(){
-        var campus = new Campus("test",
-                new Adres("test", "test", "test", "test"));
+//        var campus = new Campus("test",
+//                new Adres("test", "test", "test", "test"));
         docent = new Docent("test", "test", Geslacht.MAN,
-                BigDecimal.valueOf(100), "test@test.be", campus);
+                BigDecimal.valueOf(100), "test@test.be");
         service = new DefaultDocentService(repository);
     }
 

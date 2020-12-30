@@ -45,7 +45,8 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     void beforeEach(){
         campus = new Campus("test", new Adres("test", "test", "test", "test"));
         docent = new Docent("test", "test", Geslacht.MAN,
-                BigDecimal.valueOf(100), "test@test.be", campus);
+                BigDecimal.valueOf(100), "test@test.be");
+        campus.addDocent(docent);
     }
 
     @Test
@@ -77,11 +78,14 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
     void create(){
         manager.persist(campus);
         jpaDocentRepository.create(docent);
+        manager.flush();
         assertThat(docent.getId()).isPositive();
         assertThat(super.countRowsInTableWhere(DOCENTEN, "id = " + docent.getId())).isOne();
         assertThat(super.jdbcTemplate.queryForObject(
                 "select campusid from docenten where id = ?", Long.class, docent.getId()
         )).isEqualTo(campus.getId());
+        // Test om aan te tonen dat je beter geen generated id als hash code check gebruikt ; lukt wel als emailadres gebruikt wordt
+        assertThat(campus.getDocenten().contains(docent)).isTrue();
     }
 
     @Test
@@ -141,9 +145,11 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
                 .isEqualTo("test");
     }
 
+/*
     @Test
     void campusLazyLoaded(){
         var docent = jpaDocentRepository.findById(idVanTestMan()).get();
         assertThat(docent.getCampus().getNaam()).isEqualTo("test");
     }
+*/
 }
