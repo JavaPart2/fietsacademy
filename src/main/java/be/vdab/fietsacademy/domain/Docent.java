@@ -9,6 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "docenten")
+@NamedEntityGraph(name = "Docent.metCampusEnVerantwoordelijkheden",
+        attributeNodes = {@NamedAttributeNode("campus"), @NamedAttributeNode("verantwoordelijkheden")})
 public class Docent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
