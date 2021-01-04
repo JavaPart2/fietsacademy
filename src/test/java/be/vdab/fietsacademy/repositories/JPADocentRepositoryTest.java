@@ -1,9 +1,6 @@
 package be.vdab.fietsacademy.repositories;
 
-import be.vdab.fietsacademy.domain.Adres;
-import be.vdab.fietsacademy.domain.Campus;
-import be.vdab.fietsacademy.domain.Docent;
-import be.vdab.fietsacademy.domain.Geslacht;
+import be.vdab.fietsacademy.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,7 +14,8 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Sql({"/insertCampus.sql", "/insertDocent.sql"})
+@Sql({"/insertCampus.sql", "/insertVerantwoordelijkheid.sql",
+        "/insertDocent.sql", "/insertDocentVerantwoordelijkheid.sql"})
 @Import(JPADocentRepository.class)
 public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
     private final JPADocentRepository jpaDocentRepository;
@@ -47,6 +45,26 @@ public class JPADocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
         docent = new Docent("test", "test", Geslacht.MAN,
                 BigDecimal.valueOf(100), "test@test.be", campus);
 //        campus.addDocent(docent);
+    }
+
+    @Test
+    void verantwoordelijkhedenLezen(){
+        assertThat(jpaDocentRepository.findById(idVanTestMan()).get().getVerantwoordelijkheden())
+                .containsOnly(new Verantwoordelijkheid("test"));
+    }
+
+    @Test
+    void verantwoordelijkheidToevoegen(){
+        var verantwoordelijkheid = new Verantwoordelijkheid("test2");
+        manager.persist(verantwoordelijkheid);
+        manager.persist(campus);
+        jpaDocentRepository.create(docent);
+        docent.add(verantwoordelijkheid);
+        manager.flush();
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select verantwoordelijkheidid from docentenverantwoordelijkheden " +
+                "where docentid = ?", Long.class, docent.getId()).longValue())
+                .isEqualTo(verantwoordelijkheid.getId());
     }
 
     @Test
